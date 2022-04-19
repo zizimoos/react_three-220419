@@ -1,7 +1,8 @@
+import { useRef, useState } from "react";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
 import { useSpring, a } from "@react-spring/three";
+import { Physics, useBox, usePlane } from "@react-three/cannon";
 
 function Spin({ children }) {
   const ref = useRef();
@@ -37,6 +38,26 @@ function Cube(props) {
   );
 }
 
+function PhysicCube(props) {
+  const [ref] = useBox(() => ({ mass: 1, ...props }));
+  return (
+    <mesh ref={ref}>
+      <boxGeometry></boxGeometry>
+      <meshBasicMaterial color={props.color} />
+    </mesh>
+  );
+}
+
+function Plane(props) {
+  const [ref] = usePlane(() => ({ mass: 0, ...props }));
+  return (
+    <mesh ref={ref}>
+      <planeGeometry args={[10, 10]}></planeGeometry>
+      <meshBasicMaterial color={props.color} />
+    </mesh>
+  );
+}
+
 function App() {
   return (
     <div
@@ -55,6 +76,23 @@ function App() {
         </Spin>
         <Cube position={[1.5, 1, 1]} color="teal"></Cube>
         <Cube position={[-1.5, 1, 1]} color="red"></Cube>
+        <Physics>
+          <PhysicCube
+            position={[0, 4, 1]}
+            rotation={[0.4, 10, 2]}
+            color="yellowgreen"
+          ></PhysicCube>
+          <PhysicCube
+            position={[0.1, 2, 1]}
+            rotation={[2.4, 5, 2.8]}
+            color="yellowgreen"
+          ></PhysicCube>
+          <Plane
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -2, 0]}
+            color="white"
+          ></Plane>
+        </Physics>
         <OrbitControls />
       </Canvas>
     </div>
